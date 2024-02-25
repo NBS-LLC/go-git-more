@@ -1,6 +1,10 @@
 package main
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 type MockCommandExecutor struct {
 	output string
@@ -11,31 +15,20 @@ func (m *MockCommandExecutor) Output() ([]byte, error) {
 }
 
 func TestGitVersion(t *testing.T) {
+	assert := assert.New(t)
+
 	origShellCommandFunc := shellCommandFunc
 	defer func() { shellCommandFunc = origShellCommandFunc }()
 
 	shellCommandFunc = func(name string, args ...string) commandExecutor {
-		wantName := "git"
-		if name != wantName {
-			t.Errorf("command name: got %q, want %q", name, wantName)
-		}
-
-		wantArg1 := "--version"
-		if args[0] != wantArg1 {
-			t.Errorf("command arg1: got %q, want %q", args[0], wantArg1)
-		}
-
+		assert.Equal("git", name, "command name")
+		assert.Len(args, 1, "command args")
+		assert.Equal("--version", args[0], "1st command arg")
 		return &MockCommandExecutor{output: "git version 1.23.456\n"}
 	}
 
-	got, err := GitVersion()
-	want := "1.23.456"
-
-	if err != nil {
-		t.Fatalf("got an error")
-	}
-
-	if got != want {
-		t.Errorf("got %q, want %q", got, want)
+	version, err := GitVersion()
+	if assert.NoError(err) {
+		assert.Equal("1.23.456", version, "version string")
 	}
 }
