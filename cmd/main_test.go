@@ -2,11 +2,12 @@ package main
 
 import "testing"
 
-type MockGitVersionCommand struct {
+type MockCommandExecutor struct {
+	output string
 }
 
-func (*MockGitVersionCommand) Output() ([]byte, error) {
-	return []byte("git version 1.23.456\n"), nil
+func (m *MockCommandExecutor) Output() ([]byte, error) {
+	return []byte(m.output), nil
 }
 
 func TestGitVersion(t *testing.T) {
@@ -24,7 +25,7 @@ func TestGitVersion(t *testing.T) {
 			t.Errorf("command arg1: got %q, want %q", args[0], wantArg1)
 		}
 
-		return &MockGitVersionCommand{}
+		return &MockCommandExecutor{output: "git version 1.23.456\n"}
 	}
 
 	got, err := GitVersion()
