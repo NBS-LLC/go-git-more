@@ -10,14 +10,12 @@ type commandExecutor interface {
 	Output() ([]byte, error)
 }
 
-type shellCommandFunc func(name string, arg ...string) commandExecutor
-
-func shellCommand(name string, arg ...string) commandExecutor {
+var shellCommandFunc = func(name string, arg ...string) commandExecutor {
 	return exec.Command(name, arg...)
 }
 
-func GitVersion(s shellCommandFunc) (string, error) {
-	cmd := s("git", "--version")
+func GitVersion() (string, error) {
+	cmd := shellCommandFunc("git", "--version")
 	out, err := cmd.Output()
 
 	if err != nil {
@@ -28,6 +26,6 @@ func GitVersion(s shellCommandFunc) (string, error) {
 }
 
 func main() {
-	version, _ := GitVersion(shellCommand)
+	version, _ := GitVersion()
 	fmt.Println("Git Version:", version)
 }

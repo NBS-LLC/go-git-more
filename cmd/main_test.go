@@ -17,14 +17,17 @@ func (m *MockCommandExecutor) Output() ([]byte, error) {
 func TestGitVersion(t *testing.T) {
 	assert := assert.New(t)
 
-	shellCommandFunc := func(name string, args ...string) commandExecutor {
+	origShellCommandFunc := shellCommandFunc
+	defer func() { shellCommandFunc = origShellCommandFunc }()
+
+	shellCommandFunc = func(name string, args ...string) commandExecutor {
 		assert.Equal("git", name, "command name")
 		assert.Len(args, 1, "command args")
 		assert.Equal("--version", args[0], "1st command arg")
 		return &MockCommandExecutor{output: "git version 1.23.456\n"}
 	}
 
-	version, err := GitVersion(shellCommandFunc)
+	version, err := GitVersion()
 	if assert.NoError(err) {
 		assert.Equal("1.23.456", version, "version string")
 	}
