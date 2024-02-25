@@ -6,7 +6,7 @@ type MockGitVersionCommand struct {
 }
 
 func (*MockGitVersionCommand) Output() ([]byte, error) {
-	return []byte("git version 9.99.99\n"), nil
+	return []byte("git version 1.23.456\n"), nil
 }
 
 func TestGitVersion(t *testing.T) {
@@ -28,7 +28,7 @@ func TestGitVersion(t *testing.T) {
 	}
 
 	got, err := GitVersion()
-	want := "git version 9.99.99"
+	want := "1.23.456"
 
 	if err != nil {
 		t.Fatalf("got an error")

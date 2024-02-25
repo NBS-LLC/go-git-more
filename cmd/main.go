@@ -24,10 +24,10 @@ func GitVersion() (string, error) {
 		return "", err
 	}
 
-	return strings.TrimSpace(string(out)), nil
+	return strings.TrimSpace(string(out))[12:], nil
 }
 
 func main() {
 	version, _ := GitVersion()
-	fmt.Println(version)
+	fmt.Println("Git Version:", version)
 }
