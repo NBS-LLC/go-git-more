@@ -1,11 +1,22 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os/exec"
+)
 
-func Hello() string {
-	return "Go Git Some!"
+func GitVersion() (string, error) {
+	cmd := exec.Command("git", "--version")
+	out, err := cmd.Output()
+
+	if err != nil {
+		return "", err
+	}
+
+	return string(out), nil
 }
 
 func main() {
-	fmt.Println(Hello())
+	version, _ := GitVersion()
+	fmt.Println(version)
 }
