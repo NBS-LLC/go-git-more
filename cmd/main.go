@@ -6,15 +6,13 @@ import (
 	"strings"
 )
 
-type CommandExecutor interface {
+type commandExecutor interface {
 	Output() ([]byte, error)
 }
 
-func shellCommand(name string, arg ...string) CommandExecutor {
+var shellCommandFunc = func(name string, arg ...string) commandExecutor {
 	return exec.Command(name, arg...)
 }
-
-var shellCommandFunc = shellCommand
 
 func GitVersion() (string, error) {
 	cmd := shellCommandFunc("git", "--version")

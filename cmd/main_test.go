@@ -13,7 +13,7 @@ func TestGitVersion(t *testing.T) {
 	origShellCommandFunc := shellCommandFunc
 	defer func() { shellCommandFunc = origShellCommandFunc }()
 
-	shellCommandFunc = func(name string, args ...string) CommandExecutor {
+	shellCommandFunc = func(name string, args ...string) commandExecutor {
 		wantName := "git"
 		if name != wantName {
 			t.Errorf("command name: got %q, want %q", name, wantName)
