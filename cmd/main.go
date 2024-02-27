@@ -1,11 +1,31 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os/exec"
+	"strings"
+)
 
-func Hello() string {
-	return "Go Git Some!"
+type commandExecutor interface {
+	Output() ([]byte, error)
+}
+
+var shellCommandFunc = func(name string, arg ...string) commandExecutor {
+	return exec.Command(name, arg...)
+}
+
+func GitVersion() (string, error) {
+	cmd := shellCommandFunc("git", "--version")
+	out, err := cmd.Output()
+
+	if err != nil {
+		return "", err
+	}
+
+	return strings.TrimSpace(string(out))[12:], nil
 }
 
 func main() {
-	fmt.Println(Hello())
+	version, _ := GitVersion()
+	fmt.Println("Git Version:", version)
 }
