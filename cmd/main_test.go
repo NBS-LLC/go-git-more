@@ -20,7 +20,9 @@ func TestGitVersion(t *testing.T) {
 	origShellCommandFunc := shellCommandFunc
 	defer func() { shellCommandFunc = origShellCommandFunc }()
 
+	shellCommandCalled := false
 	shellCommandFunc = func(name string, args ...string) commandExecutor {
+		shellCommandCalled = true
 		assert.Equal("git", name, "command name")
 		assert.Len(args, 1, "command args")
 		assert.Equal("--version", args[0], "1st command arg")
@@ -31,4 +33,29 @@ func TestGitVersion(t *testing.T) {
 	if assert.NoError(err) {
 		assert.Equal("1.23.456", version, "version string")
 	}
+
+	assert.True(shellCommandCalled, "shell command called")
+}
+
+func TestGetTags(t *testing.T) {
+	assert := assert.New(t)
+
+	origShellCommandFunc := shellCommandFunc
+	defer func() { shellCommandFunc = origShellCommandFunc }()
+
+	shellCommandCalled := false
+	shellCommandFunc = func(name string, args ...string) commandExecutor {
+		shellCommandCalled = true
+		assert.Equal("git", name, "command name")
+		assert.Contains(args, "--sort=-version:refname", "command args")
+		return &MockCommandExecutor{output: "v1.0.0\nv0.1.0\nv0.0.1\n"}
+	}
+
+	expectedTags := []string{"v1.0.0", "v0.1.0", "v0.0.1"}
+	actualTags, err := GetTags()
+	if assert.NoError(err) {
+		assert.Equal(expectedTags, actualTags, "tags")
+	}
+
+	assert.True(shellCommandCalled, "shell command called")
 }
