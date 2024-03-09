@@ -59,3 +59,8 @@ func TestGetTags(t *testing.T) {
 
 	assert.True(shellCommandCalled, "shell command called")
 }
+
+func TestGetLatestTag(t *testing.T) {
+	tags := []string{"v0.1.0", "v1.0.0", "v1.1.0", "v0.2.1"}
+	assert.Equal(t, "v1.1.0", GetLatestTag(tags))
+}
