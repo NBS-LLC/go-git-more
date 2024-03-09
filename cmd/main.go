@@ -55,5 +55,5 @@ func main() {
 
 	tags, _ := GetTags()
 	fmt.Println("Tags:", tags)
-	fmt.Println("Most Recent Tag:", tags[0])
+	fmt.Println("Latest Tag:", GetLatestTag(tags))
 }
