@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os/exec"
+	"regexp"
 	"strings"
 )
 
@@ -22,7 +23,9 @@ func GitVersion() (string, error) {
 		return "", err
 	}
 
-	return strings.TrimSpace(string(out))[12:], nil
+	re := regexp.MustCompile(`\b\d+\.\d+\.\d+\b`)
+	version := re.FindString(string(out))
+	return version, nil
 }
 
 func GetTags() ([]string, error) {
